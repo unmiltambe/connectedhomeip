@@ -162,6 +162,15 @@ public class MainActivity extends AppCompatActivity {
       supportedClustersRequest.supportedClusters.add(supportedCluster);
       executorService.execute(() -> matterAgentClient.reportClusters(supportedClustersRequest));
     }
+
+    // Play Video Button
+    Button playButton = findViewById(R.id.playButton);
+    playButton.setOnClickListener(v -> {
+      String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+      Intent playVideoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+      playVideoIntent.putExtra("video_url", videoUrl);
+      startActivity(playVideoIntent);
+    });
   }
 
   private void reportAttributeChange(final int clusterId, final int attributeId) {
