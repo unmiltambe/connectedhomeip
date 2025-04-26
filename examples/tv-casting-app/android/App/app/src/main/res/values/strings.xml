@@ -4,8 +4,8 @@
     <string name="cert_test_launcher_command_title">Launch Test</string>
     <string name="launch_cert_test_button_text">Launch</string>
     <string name="content_launcher_fragment_title">Content Launcher</string>
-    <string name="launch_url_command_title">Launch URL</string>
-    <string name="launch_url_button_text">Launch URL</string>
+    <string name="launch_url_command_title">Launch URL Title</string>
+    <string name="launch_url_button_text">Launch URL on Default Player</string>
     <string name="default_content_url">https://www.test.com/videoid</string>
     <string name="default_content_display_string">Test video</string>
     <string name="content_url_prompt_text">URL</string>
@@ -41,7 +41,7 @@
     <string name="matter_connection_input_dialog_title">Enter the Commissioner-Generated Passcode</string>
     <string name="matter_connection_input_dialog_instructions">Input the Commissioner-Generated passcode displayed on the CastingPlayer UX, or use the default provided (12345678).</string>
     <string name="matter_action_selector_text">Select an action</string>
-    <string name="matter_select_content_launcher_launch_url_button_text">Content Launcher Launch URL</string>
+    <string name="matter_select_content_launcher_launch_url_button_text">Content Launcher Launch URL on Default Player</string>
     <string name="matter_disconnect_text">Disconnect from Casting Player</string>
     <string name="matter_application_basic_fragment_title">Application Basic</string>
     <string name="vendor_id_attribute_title">VendorID attribute</string>

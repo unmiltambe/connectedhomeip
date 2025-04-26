@@ -32,8 +32,10 @@
         </activity>
         <activity
             android:name=".VideoPlayerActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
+        <activity
+            android:name=".ImageViewerActivity"
+            android:exported="false" />
         <receiver
             android:name=".receiver.MatterCommandReceiver"
             android:permission="com.matter.tv.app.api.permission.SEND_DATA"

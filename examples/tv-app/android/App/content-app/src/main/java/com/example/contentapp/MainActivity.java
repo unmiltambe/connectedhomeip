@@ -164,12 +164,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Play Video Button
-    Button playButton = findViewById(R.id.playButton);
-    playButton.setOnClickListener(v -> {
+    Button playVideoButton = findViewById(R.id.playButton);
+    playVideoButton.setOnClickListener(v -> {
       String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
       Intent playVideoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
       playVideoIntent.putExtra("video_url", videoUrl);
       startActivity(playVideoIntent);
+    });
+
+    // View Images Button
+    Button viewImagesButton = findViewById(R.id.viewImagesButton);
+    viewImagesButton.setOnClickListener(v -> {
+      Intent viewImagesIntent = new Intent(MainActivity.this, ImageViewerActivity.class);
+      startActivity(viewImagesIntent);
     });
   }
 
