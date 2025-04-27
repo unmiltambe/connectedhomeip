@@ -1,89 +1,96 @@
 package com.example.contentapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 public class VideoPlayerActivity extends AppCompatActivity {
+    private static final String TAG = "VideoPlayerActivity";
     private PlayerView playerView;
     private SimpleExoPlayer player;
+    private final Player.Listener playerListener = new Player.Listener() {
+        @Override
+        public void onPlayerError(com.google.android.exoplayer2.PlaybackException error) {
+            String errorMessage = "An error occurred: " + error.getLocalizedMessage();
+            Toast.makeText(VideoPlayerActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_video_player);
 
-        // Close button
+        playerView = findViewById(R.id.player_view);
+
+        String videoUrl = getIntent().getStringExtra("video_url");
+        Log.d(TAG, "Video URL: " + videoUrl);
+
         findViewById(R.id.closeButton).setOnClickListener(v -> {
-            finish();  // This will close the activity and return to previous screen
+            Log.d(TAG, "Close button clicked");
+            finish();
         });
 
-        // Player view
-        playerView = findViewById(R.id.player_view);
-        String videoUrl = getIntent().getStringExtra("video_url");
         initializePlayer(videoUrl);
     }
 
     private void initializePlayer(String videoUrl) {
-        // Create player instance
+        Log.d(TAG, "Initializing player");
+
         player = new SimpleExoPlayer.Builder(this).build();
+        playerView.setPlayer(player); // Link the PlayerView with ExoPlayer
 
-        // Bind the player to the view
-        playerView.setPlayer(player);
-
-        // Create media item
+        // Set the media item
         MediaItem mediaItem = MediaItem.fromUri(videoUrl);
-
-        // Set the media item to be played
         player.setMediaItem(mediaItem);
-
-        // Prepare the player
         player.prepare();
-
-        // Start the video automatically (optional)
         player.play();
 
-        addPlayerListeners();
+        player.addListener(playerListener);
     }
 
-    private void addPlayerListeners() {
-        player.addListener(new Player.Listener() {
-            public void onPlayerError(ExoPlaybackException error) {
-                String errorMessage = "An error occurred: " + error.getMessage();
-                Toast.makeText(VideoPlayerActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-            }
-        });
+    private void releasePlayer() {
+        Log.d(TAG, "Releasing player");
+
+        if (player != null) {
+            // Release player resources properly
+            player.removeListener(playerListener);
+            player.release();
+            player = null;
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
         if (player != null) {
-            player.play();
+            player.pause(); // Pause player when activity is paused
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (player != null) {
-            player.pause();
-        }
+        Log.d(TAG, "onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (player != null) {
-            player.release();
-            player = null;
-        }
+        Log.d(TAG, "onDestroy");
+        releasePlayer(); // Ensure cleanup when activity is destroyed
     }
 }

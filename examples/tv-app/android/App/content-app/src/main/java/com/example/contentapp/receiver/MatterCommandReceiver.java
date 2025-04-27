@@ -62,7 +62,8 @@ public class MatterCommandReceiver extends BroadcastReceiver {
                       + "\"}");
 
           String response =
-              CommandResponseHolder.getInstance().getCommandResponse(clusterId, commandId);
+              CommandResponseHolder.getInstance().getCommandResponse(
+                  context, clusterId, commandId, command);
 
           Intent in = new Intent(context, MainActivity.class);
           in.putExtra(MatterIntentConstants.EXTRA_COMMAND_PAYLOAD, command);

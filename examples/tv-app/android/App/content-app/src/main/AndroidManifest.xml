@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.contentapp">
 
+    <!-- Permissions to send intent from non-activity class to MainActivity -->
+    <permission
+        android:name="com.example.contentapp.LAUNCH_VIDEO"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.contentapp.LAUNCH_VIDEO" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.matter.tv.app.api.permission.BIND_SERVICE_PERMISSION"/>
@@ -32,7 +38,10 @@
         </activity>
         <activity
             android:name=".VideoPlayerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".ImageViewerActivity"
             android:exported="false" />

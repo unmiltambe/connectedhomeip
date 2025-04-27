@@ -1,6 +1,9 @@
 package com.example.contentapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
   private static final String ATTR_TL_SHORT = "Target List : SHORT";
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
   private String setupPIN = "";
+  private BroadcastReceiver videoLaunchReceiver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +182,23 @@ public class MainActivity extends AppCompatActivity {
       Intent viewImagesIntent = new Intent(MainActivity.this, ImageViewerActivity.class);
       startActivity(viewImagesIntent);
     });
+
+    // Register broadcast receiver
+    videoLaunchReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        String videoUrl = intent.getStringExtra("video_url");
+        if (videoUrl != null) {
+          // Launch video from activity context
+          Intent videoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+          videoIntent.putExtra("video_url", videoUrl);
+          startActivity(videoIntent);
+        }
+      }
+    };
+
+    registerReceiver(videoLaunchReceiver,
+            new IntentFilter("com.example.contentapp.LAUNCH_VIDEO"));
   }
 
   private void reportAttributeChange(final int clusterId, final int attributeId) {
@@ -190,4 +211,13 @@ public class MainActivity extends AppCompatActivity {
           }
         });
   }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (videoLaunchReceiver != null) {
+      unregisterReceiver(videoLaunchReceiver);
+    }
+  }
 }
+
