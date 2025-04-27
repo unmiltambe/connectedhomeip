@@ -57,6 +57,11 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
             "Sintel - By Blender Foundation"
     );
 
+    private static final VideoContent SAMPLE_IMAGE_GALLERY = new VideoContent(
+            "https://picsum.photos/v2/list?page=1&limit=20",
+            "Picsum Image Gallery"
+    );
+
     // Static class to hold video content information
     private static class VideoContent {
         final String url;
@@ -137,6 +142,14 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
             video3Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_3));
         } else {
             Log.e(TAG, "launchVideo3Button not found in layout");
+        }
+
+        // Sample image gallery button
+        View imageGalleryButton = view.findViewById(R.id.launchImageGalleryButton);
+        if (imageGalleryButton != null) {
+            imageGalleryButton.setOnClickListener(v -> launchVideoContent(SAMPLE_IMAGE_GALLERY));
+        } else {
+            Log.e(TAG, "launchImageGalleryButton not found in layout");
         }
     }
 

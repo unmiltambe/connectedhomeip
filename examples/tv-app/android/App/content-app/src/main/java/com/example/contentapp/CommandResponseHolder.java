@@ -113,22 +113,33 @@ public class CommandResponseHolder {
         throw new JSONException("No URL found in response");
       }
 
-      String videoUrl = jsonObject.getString("0");
-      if (!videoUrl.startsWith("http://") && !videoUrl.startsWith("https://")) {
+      String url = jsonObject.getString("0");
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
         throw new JSONException("Invalid URL format");
       }
 
       if (jsonObject.has("1")) {
         String displayString = jsonObject.getString("1");
         if (!displayString.isEmpty()) {
-          Toast.makeText(appContext, "Playing " + displayString + "\n" + videoUrl,
+          Toast.makeText(appContext, "Playing " + displayString + "\n" + url,
                   Toast.LENGTH_LONG).show();
         }
       }
 
-      Log.d(TAG, "Sending intent to MainActivity to play video");
-      Intent intent = new Intent("com.example.contentapp.LAUNCH_VIDEO");
-      intent.putExtra("video_url", videoUrl);
+      // If URL is for picsum, launch image viewer otherwise launch video player
+      Intent intent;
+      if (url.contains("picsum.photos/v2/list")) {
+        Log.d(TAG, "Launching image gallery viewer for picsum: " + url);
+        intent = new Intent("com.example.contentapp.LAUNCH_IMAGE_GALLERY");
+        intent.putExtra("gallery_url", url);
+      } else {
+        // Assume it's a video URL
+        Log.d(TAG, "Launching video player for: " + url);
+        intent = new Intent("com.example.contentapp.LAUNCH_VIDEO");
+        intent.putExtra("video_url", url);
+      }
+
+      Log.d(TAG, "Sending intent to MainActivity to play content");
       context.sendBroadcast(intent);
       Log.d(TAG, "Broadcast sent to MainActivity");
 

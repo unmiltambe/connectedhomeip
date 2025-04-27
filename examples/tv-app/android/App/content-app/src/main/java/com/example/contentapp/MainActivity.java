@@ -32,7 +32,19 @@ public class MainActivity extends AppCompatActivity {
   private static final String ATTR_TL_SHORT = "Target List : SHORT";
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
   private String setupPIN = "";
-  private BroadcastReceiver videoLaunchReceiver;
+  private BroadcastReceiver contentReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String action = intent.getAction();
+      if ("com.example.contentapp.LAUNCH_VIDEO".equals(action)) {
+        String videoUrl = intent.getStringExtra("video_url");
+        launchVideoPlayer(videoUrl);
+      } else if ("com.example.contentapp.LAUNCH_IMAGE_GALLERY".equals(action)) {
+        String galleryUrl = intent.getStringExtra("gallery_url");
+        launchImageGallery(galleryUrl);
+      }
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -179,26 +191,32 @@ public class MainActivity extends AppCompatActivity {
     // View Images Button
     Button viewImagesButton = findViewById(R.id.viewImagesButton);
     viewImagesButton.setOnClickListener(v -> {
+      String galleryUrl = "https://picsum.photos/v2/list?page=1&limit=20";
       Intent viewImagesIntent = new Intent(MainActivity.this, ImageViewerActivity.class);
+      viewImagesIntent.putExtra("gallery_url", galleryUrl);
       startActivity(viewImagesIntent);
     });
 
     // Register broadcast receiver
-    videoLaunchReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        String videoUrl = intent.getStringExtra("video_url");
-        if (videoUrl != null) {
-          // Launch video from activity context
-          Intent videoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-          videoIntent.putExtra("video_url", videoUrl);
-          startActivity(videoIntent);
-        }
-      }
-    };
+    IntentFilter filter = new IntentFilter();
+    filter.addAction("com.example.contentapp.LAUNCH_VIDEO");
+    filter.addAction("com.example.contentapp.LAUNCH_IMAGE_GALLERY");
+    registerReceiver(contentReceiver, filter);
+  }
 
-    registerReceiver(videoLaunchReceiver,
-            new IntentFilter("com.example.contentapp.LAUNCH_VIDEO"));
+  private void launchVideoPlayer(String videoUrl) {
+    if (videoUrl != null) {
+      // Launch video from activity context
+      Intent videoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+      videoIntent.putExtra("video_url", videoUrl);
+      startActivity(videoIntent);
+    }
+  }
+
+  private void launchImageGallery(String galleryUrl) {
+    Intent viewImagesIntent = new Intent(MainActivity.this, ImageViewerActivity.class);
+    viewImagesIntent.putExtra("gallery_url", galleryUrl);
+    startActivity(viewImagesIntent);
   }
 
   private void reportAttributeChange(final int clusterId, final int attributeId) {
@@ -215,9 +233,8 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    if (videoLaunchReceiver != null) {
-      unregisterReceiver(videoLaunchReceiver);
+    if (contentReceiver != null) {
+      unregisterReceiver(contentReceiver);
     }
   }
 }
-

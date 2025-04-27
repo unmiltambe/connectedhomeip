@@ -1,5 +1,6 @@
 package com.example.contentapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +8,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.matter.tv.app.api.MatterIntentConstants;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -24,13 +27,13 @@ public class ImageViewerActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         findViewById(R.id.closeButton).setOnClickListener(v -> finish());
 
-        fetchPicsumImages();
+        Intent intent = getIntent();
+        String galleryUrl = intent.getStringExtra("gallery_url");
+        fetchPicsumImages(galleryUrl);
     }
 
-    private void fetchPicsumImages() {
-        String url = "https://picsum.photos/v2/list?page=1&limit=10";
-
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+    private void fetchPicsumImages(String galleryUrl) {
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, galleryUrl, null,
                 response -> {
                     try {
                         List<String> imageUrls = new ArrayList<>();

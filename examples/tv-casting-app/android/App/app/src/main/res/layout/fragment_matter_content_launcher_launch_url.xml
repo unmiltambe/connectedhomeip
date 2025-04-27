@@ -112,6 +112,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sintel" />
+
+            <Button
+                android:id="@+id/launchImageGalleryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Launch Image Gallery" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
