@@ -92,26 +92,56 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Play Sample Videos:"
+                android:text="Sample Videos"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <Button
                 android:id="@+id/launchVideo1Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Big Buck Bunny" />
+                android:text="MP4 Sample" />
 
             <Button
                 android:id="@+id/launchVideo2Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Elephants Dream" />
+                android:text="HLS Sample" />
 
             <Button
                 android:id="@+id/launchVideo3Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sintel" />
+                android:text="MPEG-DASH Sample" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sample Audio Files"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <Button
+                android:id="@+id/launchAudio1Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MP3 Sample" />
+
+            <Button
+                android:id="@+id/launchAudio2Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AAC Sample" />
+
+            <Button
+                android:id="@+id/launchAudio3Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OGG Sample" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sample Image Gallery"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <Button
                 android:id="@+id/launchImageGalleryButton"

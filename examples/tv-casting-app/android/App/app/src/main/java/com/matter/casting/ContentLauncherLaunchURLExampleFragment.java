@@ -44,17 +44,32 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
     // Define your video content entries
     private static final VideoContent SAMPLE_VIDEO_1 = new VideoContent(
             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            "Big Buck Bunny - By Blender Foundation"
+            "MP4 - Big Buck Bunny"
     );
 
     private static final VideoContent SAMPLE_VIDEO_2 = new VideoContent(
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            "Elephants Dream - By Blender Foundation"
+            "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8",
+            "HLS - Tears of Steel"
     );
 
     private static final VideoContent SAMPLE_VIDEO_3 = new VideoContent(
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-            "Sintel - By Blender Foundation"
+            "https://dash.akamaized.net/dash264/TestCasesHD/2b/qualcomm/1/MultiResMPEG2.mpd",
+            "MPEG-DASH - Elephants Dream"
+    );
+
+    private static final VideoContent SAMPLE_AUDIO_1 = new VideoContent(
+            "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.mp3",
+            "Sample MP3 File"
+    );
+
+    private static final VideoContent SAMPLE_AUDIO_2 = new VideoContent(
+            "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.m4a",
+            "Sample AAC File"
+    );
+
+    private static final VideoContent SAMPLE_AUDIO_3 = new VideoContent(
+            "https://github.com/rafaelreis-hotmart/Audio-Sample-files/raw/master/sample.ogg",
+            "Sample OGG File"
     );
 
     private static final VideoContent SAMPLE_IMAGE_GALLERY = new VideoContent(
@@ -112,45 +127,37 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "ContentLauncherLaunchURLExampleFragment.onViewCreated called");
 
-        // Original launch URL button
+        // Launch URL button
         View launchUrlButton = view.findViewById(R.id.launchUrlButton);
-        if (launchUrlButton != null) {
-            launchUrlButton.setOnClickListener(v -> launchVideoContent(getUserInputContent(view)));
-        } else {
-            Log.e(TAG, "launchUrlButton not found in layout");
-        }
+        launchUrlButton.setOnClickListener(v -> launchVideoContent(getUserInputContent(view)));
 
         // Sample video 1 button
         View video1Button = view.findViewById(R.id.launchVideo1Button);
-        if (video1Button != null) {
-            video1Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_1));
-        } else {
-            Log.e(TAG, "launchVideo1Button not found in layout");
-        }
+        video1Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_1));
 
         // Sample video 2 button
         View video2Button = view.findViewById(R.id.launchVideo2Button);
-        if (video2Button != null) {
-            video2Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_2));
-        } else {
-            Log.e(TAG, "launchVideo2Button not found in layout");
-        }
+        video2Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_2));
 
         // Sample video 3 button
         View video3Button = view.findViewById(R.id.launchVideo3Button);
-        if (video3Button != null) {
-            video3Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_3));
-        } else {
-            Log.e(TAG, "launchVideo3Button not found in layout");
-        }
+        video3Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_3));
+
+        // Sample audio 1 button
+        View audioButton = view.findViewById(R.id.launchAudio1Button);
+        audioButton.setOnClickListener(v -> launchVideoContent(SAMPLE_AUDIO_1));
+
+        // Sample audio 2 button
+        View audio2Button = view.findViewById(R.id.launchAudio2Button);
+        audio2Button.setOnClickListener(v -> launchVideoContent(SAMPLE_AUDIO_2));
+
+        // Sample audio 3 button
+        View audio3Button = view.findViewById(R.id.launchAudio3Button);
+        audio3Button.setOnClickListener(v -> launchVideoContent(SAMPLE_AUDIO_3));
 
         // Sample image gallery button
         View imageGalleryButton = view.findViewById(R.id.launchImageGalleryButton);
-        if (imageGalleryButton != null) {
-            imageGalleryButton.setOnClickListener(v -> launchVideoContent(SAMPLE_IMAGE_GALLERY));
-        } else {
-            Log.e(TAG, "launchImageGalleryButton not found in layout");
-        }
+        imageGalleryButton.setOnClickListener(v -> launchVideoContent(SAMPLE_IMAGE_GALLERY));
     }
 
     private VideoContent getUserInputContent(View view) {
