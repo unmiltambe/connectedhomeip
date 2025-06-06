@@ -199,27 +199,13 @@ public class MainActivity extends AppCompatActivity {
     playDrmButton.setOnClickListener(v -> {
         try {
           JSONObject drmData = new JSONObject();
-          drmData.put("contentUrl", "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd");
-          drmData.put("licenseServerUrl", "https://proxy.uat.widevine.com/proxy?provider=widevine_test");
+          drmData.put("contentUrl", "https://dtkya1w875897.cloudfront.net/da6dc30a-e52f-4af2-9751-000b89416a4e/assets/357577a1-3b61-43ae-9af5-82b9727e2f22/videokit-720p-dash-hls-drm/dash/index.mpd");
+          drmData.put("licenseServerUrl", "https://insys-marketing.la.drm.cloud/acquire-license/widevine");
           drmData.put("drmScheme", "widevine");
 
           JSONObject headers = new JSONObject();
-          headers.put("Authorization", "Bearer sample-token");
-          headers.put("x-playback-token", "abc123");
-          headers.put("x-session-id", "session456");
-          headers.put("x-request-id", "request789");
-          headers.put("x-drm-key-id", "key-xyz");
-
-          drmData.put("httpHeaders", headers);
-
-//          drmData.put("contentUrl", "https://dtkya1w875897.cloudfront.net/da6dc30a-e52f-4af2-9751-000b89416a4e/assets/357577a1-3b61-43ae-9af5-82b9727e2f22/videokit-720p-dash-hls-drm/dash/index.mpd");
-//          drmData.put("licenseServerUrl", "https://insys-marketing.la.drm.cloud/acquire-license/widevine");
-//          drmData.put("drmScheme", "widevine");
-//          drmData.put("userAgent", "ExoPlayer-Drm");
-//
-//          JSONObject headers = new JSONObject();
-//          headers.put("x-drm-brandGuid", "da6dc30a-e52f-4af2-9751-000b89416a4e");
-//          headers.put("x-drm-userToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4OTM0NTYwMDAsImRybVRva2VuSW5mbyI6eyJleHAiOiIyMDMwLTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwia2lkIjpbIjFmODNhZTdmLTMwYzgtNGFkMC04MTcxLTI5NjZhMDFiNjU0NyJdLCJwIjp7InBlcnMiOmZhbHNlfX19.hElVqrfK-iLeV_ZleJJO8i-Mf1D2yYVXdtgBE0ja9R4");
+          headers.put("x-drm-brandGuid", "da6dc30a-e52f-4af2-9751-000b89416a4e");
+          headers.put("x-drm-userToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4OTM0NTYwMDAsImRybVRva2VuSW5mbyI6eyJleHAiOiIyMDMwLTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwia2lkIjpbIjFmODNhZTdmLTMwYzgtNGFkMC04MTcxLTI5NjZhMDFiNjU0NyJdLCJwIjp7InBlcnMiOmZhbHNlfX19.hElVqrfK-iLeV_ZleJJO8i-Mf1D2yYVXdtgBE0ja9R4");
 
           drmData.put("httpHeaders", headers);
 

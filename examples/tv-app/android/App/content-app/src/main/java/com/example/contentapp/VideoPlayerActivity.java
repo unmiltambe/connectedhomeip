@@ -41,6 +41,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private static final String CLEARKEY_UUID = "e2719d58-a985-b3c9-781a-b030af78d30e";
     private static final String FAIRPLAY_UUID = "94ce86fb-07ff-4f43-adb8-93d2fa968ca2"; // Used more in HLS context
     private static final String MARLIN_UUID   = "5e629af5-38da-4063-8977-97ffbd9902d4";
+    private static final String USER_AGENT = "ExoPlayer-Drm";
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private final Player.Listener playerListener = new Player.Listener() {
@@ -58,7 +59,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         private String drmScheme;
         private String mimeType;
         private Map<String, String> httpHeaders;
-
         public String getContentUrl() { return contentUrl; }
         public String getLicenseServerUrl() { return licenseServerUrl; }
         public String getDrmScheme() { return drmScheme; }
@@ -208,6 +208,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             
             // Create HTTP data source factory with headers
             HttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
+                    .setUserAgent(USER_AGENT)
                     .setDefaultRequestProperties(httpHeaders)
                     .setAllowCrossProtocolRedirects(true);
 
