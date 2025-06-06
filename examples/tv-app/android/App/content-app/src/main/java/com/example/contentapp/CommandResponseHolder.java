@@ -115,7 +115,7 @@ public class CommandResponseHolder {
 
       String url = jsonObject.getString("0");
       if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        throw new JSONException("Invalid URL format");
+        Log.w(TAG, "Invalid URL format");
       }
 
       if (jsonObject.has("1")) {
