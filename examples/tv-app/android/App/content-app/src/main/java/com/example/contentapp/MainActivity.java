@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Base64;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,9 +18,13 @@ import com.matter.tv.app.api.Clusters;
 import com.matter.tv.app.api.MatterIntentConstants;
 import com.matter.tv.app.api.SetSupportedClustersRequest;
 import com.matter.tv.app.api.SupportedCluster;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -180,13 +186,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Play Video Button
-    Button playVideoButton = findViewById(R.id.playButton);
+    Button playVideoButton = findViewById(R.id.playRegularVideoButton);
     playVideoButton.setOnClickListener(v -> {
       String videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
       Intent playVideoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
       playVideoIntent.putExtra("video_url", videoUrl);
       startActivity(playVideoIntent);
     });
+
+    // Play DRM Video Button
+    Button playDrmButton = findViewById(R.id.playDrmVideoButton);
+    playDrmButton.setOnClickListener(v -> {
+        try {
+          JSONObject drmData = new JSONObject();
+          drmData.put("contentUrl", "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd");
+          drmData.put("licenseServerUrl", "https://proxy.uat.widevine.com/proxy?provider=widevine_test");
+          drmData.put("drmScheme", "widevine");
+
+          JSONObject headers = new JSONObject();
+          headers.put("Authorization", "Bearer sample-token");
+          headers.put("x-playback-token", "abc123");
+          headers.put("x-session-id", "session456");
+          headers.put("x-request-id", "request789");
+          headers.put("x-drm-key-id", "key-xyz");
+
+          drmData.put("httpHeaders", headers);
+
+//          drmData.put("contentUrl", "https://dtkya1w875897.cloudfront.net/da6dc30a-e52f-4af2-9751-000b89416a4e/assets/357577a1-3b61-43ae-9af5-82b9727e2f22/videokit-720p-dash-hls-drm/dash/index.mpd");
+//          drmData.put("licenseServerUrl", "https://insys-marketing.la.drm.cloud/acquire-license/widevine");
+//          drmData.put("drmScheme", "widevine");
+//          drmData.put("userAgent", "ExoPlayer-Drm");
+//
+//          JSONObject headers = new JSONObject();
+//          headers.put("x-drm-brandGuid", "da6dc30a-e52f-4af2-9751-000b89416a4e");
+//          headers.put("x-drm-userToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4OTM0NTYwMDAsImRybVRva2VuSW5mbyI6eyJleHAiOiIyMDMwLTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwia2lkIjpbIjFmODNhZTdmLTMwYzgtNGFkMC04MTcxLTI5NjZhMDFiNjU0NyJdLCJwIjp7InBlcnMiOmZhbHNlfX19.hElVqrfK-iLeV_ZleJJO8i-Mf1D2yYVXdtgBE0ja9R4");
+
+          drmData.put("httpHeaders", headers);
+
+          String drmJson = drmData.toString();
+          String base64Encoded = Base64.encodeToString(
+                  drmJson.getBytes(StandardCharsets.UTF_8),
+                  Base64.NO_WRAP
+          );
+
+          Intent drmVideoIntent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+          drmVideoIntent.putExtra("video_url", base64Encoded);
+          startActivity(drmVideoIntent);
+
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+      });
 
     // View Images Button
     Button viewImagesButton = findViewById(R.id.viewImagesButton);

@@ -3,6 +3,7 @@ package com.example.contentapp;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,10 +32,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.nio.charset.StandardCharsets;
 
 public class VideoPlayerActivity extends AppCompatActivity {
     private static final String TAG = "VideoPlayerActivity";
     private static final String WIDEVINE_UUID = "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed";
+    private static final String PLAYREADY_UUID = "9a04f079-9840-4286-ab92-e65be0885f95";
+    private static final String CLEARKEY_UUID = "e2719d58-a985-b3c9-781a-b030af78d30e";
+    private static final String FAIRPLAY_UUID = "94ce86fb-07ff-4f43-adb8-93d2fa968ca2"; // Used more in HLS context
+    private static final String MARLIN_UUID   = "5e629af5-38da-4063-8977-97ffbd9902d4";
     private PlayerView playerView;
     private SimpleExoPlayer player;
     private final Player.Listener playerListener = new Player.Listener() {
@@ -89,10 +95,18 @@ public class VideoPlayerActivity extends AppCompatActivity {
             Log.d(TAG, "Regular video URL detected: " + videoUrl);
             initializePlayer(videoUrl);
         } else {
-            // This appears to be a JSON string - try to parse it for DRM
+            // This appears to be DRM Config String encoded as Base64
             try {
-                Log.d(TAG, "Attempting to parse DRM configuration");
-                DrmConfig drmConfig = parseDrmConfig(videoUrl);
+                String jsonConfig = base64ToString(videoUrl);
+                if (jsonConfig == null || jsonConfig.isEmpty()) {
+                    Log.e(TAG, "Decoded base64 string is empty");
+                    return;
+                }
+                DrmConfig drmConfig = parseDrmConfig(jsonConfig);
+                if (drmConfig == null) {
+                    Log.e(TAG, "Failed to parse JSON config: " + jsonConfig);
+                    return;
+                }
                 initializePlayerWithDrm(drmConfig);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to parse DRM configuration: " + e.getMessage(), e);
@@ -103,12 +117,34 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     /**
+     * Convert Base64 encoded string to JSON
+     */
+    private String base64ToString(String base64) {
+        Log.d(TAG, "Decoding Base64 to string");
+        try {
+            byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
+            String base64String = new String(decodedBytes, StandardCharsets.UTF_8);
+            Log.e(TAG, "Decoded string: " + base64String);
+            return base64String;
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Failed to decode base64 to string" + base64);
+            return null;
+        }
+    }
+
+    /**
      * Parse the JSON string into a DrmConfig object
      */
     private DrmConfig parseDrmConfig(String jsonData) throws JSONException {
-        Log.d(TAG, "Parsing DRM configuration JSON");
+        Log.i(TAG, "Parsing DRM configuration JSON: " + jsonData);
+        if (jsonData == null || !jsonData.trim().startsWith("{")) {
+            Log.e(TAG, "Invalid JSON: " + jsonData);
+            return null;
+        }
+
+        // Convert JSON to config class object
         DrmConfig config = new Gson().fromJson(jsonData, DrmConfig.class);
-        
+
         // Validate required fields
         if (TextUtils.isEmpty(config.getContentUrl())) {
             throw new IllegalArgumentException("contentUrl is required in DRM configuration");
@@ -116,7 +152,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(config.getLicenseServerUrl())) {
             throw new IllegalArgumentException("licenseServerUrl is required in DRM configuration");
         }
-        
+        if (TextUtils.isEmpty(config.getDrmScheme())) {
+            throw new IllegalArgumentException("drmScheme is required in DRM configuration");
+        }
+
         return config;
     }
 
@@ -151,15 +190,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
             // Get content URL and DRM license URL
             String contentUrl = config.getContentUrl();
             String licenseUrl = config.getLicenseServerUrl();
-            Log.d(TAG, "Content URL: " + contentUrl);
-            Log.d(TAG, "License URL: " + licenseUrl);
+            Log.i(TAG, "Content URL: " + contentUrl);
+            Log.i(TAG, "License URL: " + licenseUrl);
 
             // Get MIME type
             String mimeType = config.getMimeType();
             if (TextUtils.isEmpty(mimeType)) {
                 mimeType = "application/dash+xml"; // Default to DASH if not specified
             }
-            Log.d(TAG, "MIME type: " + mimeType);
+            Log.i(TAG, "MIME type: " + mimeType);
 
             // HTTP headers
             Map<String, String> httpHeaders = config.getHttpHeaders();
@@ -173,6 +212,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     .setAllowCrossProtocolRedirects(true);
 
             // Create DRM callback
+            Log.i(TAG, "DRM scheme: " + config.getDrmScheme());
             UUID drmSchemeUuid = getDrmUuid(config.getDrmScheme());
             HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
             
@@ -210,7 +250,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
         switch (schemeId.toLowerCase()) {
             case "widevine":
                 return UUID.fromString(WIDEVINE_UUID);
-            // Add other DRM schemes if needed
+            case "playready":
+                return UUID.fromString(PLAYREADY_UUID);
+            case "clearkey":
+                return UUID.fromString(CLEARKEY_UUID);
+            case "fairplay":
+                return UUID.fromString(FAIRPLAY_UUID);
+            case "marlin":
+                return UUID.fromString(MARLIN_UUID);
             default:
                 Log.w(TAG, "Unknown DRM scheme: " + schemeId + ", defaulting to Widevine");
                 return UUID.fromString(WIDEVINE_UUID);
