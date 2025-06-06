@@ -19,6 +19,7 @@ package com.matter.casting;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,10 @@ import chip.devicecontroller.ChipClusters;
 import com.R;
 import com.matter.casting.core.CastingPlayer;
 import com.matter.casting.core.Endpoint;
+
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /** A {@link Fragment} to send Content Launcher LaunchURL command using the TV Casting App. */
@@ -143,6 +148,13 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
         View video3Button = view.findViewById(R.id.launchVideo3Button);
         video3Button.setOnClickListener(v -> launchVideoContent(SAMPLE_VIDEO_3));
 
+        // Sample DRM video button
+        final VideoContent SAMPLE_DRM_VIDEO = getDrmVideoContent();
+        if (SAMPLE_DRM_VIDEO != null) {
+            View videoDRMVideoButton = view.findViewById(R.id.launchDRMVideoButton);
+            videoDRMVideoButton.setOnClickListener(v -> launchVideoContent(SAMPLE_DRM_VIDEO));
+        }
+
         // Sample audio 1 button
         View audioButton = view.findViewById(R.id.launchAudio1Button);
         audioButton.setOnClickListener(v -> launchVideoContent(SAMPLE_AUDIO_1));
@@ -214,5 +226,39 @@ public class ContentLauncherLaunchURLExampleFragment extends Fragment {
                 content.url,
                 Optional.of(content.displayName),
                 Optional.empty());
+    }
+
+    /**
+     * Creates a DRM config JSON and encodes it as base64 string
+     *
+     * @return A VideoContent object with encoded DRM params
+     */
+    private VideoContent getDrmVideoContent() {
+        try {
+            // For DRM-protected video, create
+            JSONObject drmParamsJson = new JSONObject();
+            drmParamsJson.put("contentUrl", "https://dtkya1w875897.cloudfront.net/da6dc30a-e52f-4af2-9751-000b89416a4e/assets/357577a1-3b61-43ae-9af5-82b9727e2f22/videokit-720p-dash-hls-drm/dash/index.mpd");
+            drmParamsJson.put("licenseServerUrl", "https://insys-marketing.la.drm.cloud/acquire-license/widevine");
+            drmParamsJson.put("drmScheme", "widevine");
+            JSONObject headers = new JSONObject();
+            headers.put("x-drm-brandGuid", "da6dc30a-e52f-4af2-9751-000b89416a4e");
+            headers.put("x-drm-userToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4OTM0NTYwMDAsImRybVRva2VuSW5mbyI6eyJleHAiOiIyMDMwLTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwia2lkIjpbIjFmODNhZTdmLTMwYzgtNGFkMC04MTcxLTI5NjZhMDFiNjU0NyJdLCJwIjp7InBlcnMiOmZhbHNlfX19.hElVqrfK-iLeV_ZleJJO8i-Mf1D2yYVXdtgBE0ja9R4");
+            drmParamsJson.put("httpHeaders", headers);
+            String drmJsonString = drmParamsJson.toString();
+            Log.d(TAG, "Base64 encoding DRM JSON: " + drmJsonString);
+
+            String drmVideoConfig = Base64.encodeToString(
+                    drmJsonString.getBytes(StandardCharsets.UTF_8),
+                    Base64.NO_WRAP
+            );
+
+            return new VideoContent(
+                    drmVideoConfig,
+                    "DRM Protected MPEG-DASH Video Sample"
+            );
+        } catch (org.json.JSONException e) {
+            Log.e(TAG, "Failed to create DRM Video Content object");
+            return null;
+        }
     }
 }
